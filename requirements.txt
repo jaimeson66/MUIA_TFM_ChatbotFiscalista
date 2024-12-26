@@ -1,2 +1,6 @@
+cuda-python==12.4.0
+cudf-cu12==24.10.1
+cufflinks==0.17.3
+cupy-cuda12x==12.3.0
 torch==2.5.1
 transformers==4.47.1
