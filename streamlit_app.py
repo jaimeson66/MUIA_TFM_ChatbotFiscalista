@@ -93,7 +93,7 @@ def on_chat_submit(chat_input):
     st.session_state.conversation_history.append({"role": "user", "content": user_input})
     model_engine = "gpt2"
     assistant_reply = ""
-    generator = pipeline("text-generation", model=model_engine, device="cuda")
+    generator = pipeline("text-generation", model=model_engine)
     assistant_reply = generator(user_input, max_length=100, num_return_sequences=1)[0]["generated_text"]
 
 
