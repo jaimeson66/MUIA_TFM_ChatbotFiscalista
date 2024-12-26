@@ -2,7 +2,7 @@ import torch
 from transformers import T5Tokenizer, T5ForConditionalGeneration,MT5ForConditionalGeneration,AutoModelForSeq2SeqLM
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 
-def text_gen(pregunta):
+def generar_respuesta(pregunta):
     model_name = "timpal0l/mdeberta-v3-base-squad2"  # Modelo ya afinado en SQuAD en español
     model_SQUAD = AutoModelForQuestionAnswering.from_pretrained(model_name)
     tokenizer_SQUAD = AutoTokenizer.from_pretrained(model_name)
