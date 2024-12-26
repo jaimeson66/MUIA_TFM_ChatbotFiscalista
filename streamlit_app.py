@@ -7,6 +7,7 @@ import json
 import requests
 import base64
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from inferencia import generar_respuesta
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +20,6 @@ API_DOCS_URL = "https://docs.streamlit.io/library/api-reference"
 st.set_page_config(
     page_title="Streamly - Asistente virtual de IVA",
     layout="wide"
-
 )
 
 # Streamlit Title
@@ -37,7 +37,7 @@ def img_to_base64(image_path):
 @st.cache_data(show_spinner=False)
 def long_running_task(duration):
     """
-    Simulates a long-running operation.
+    Simula una operación de larga duración
 
     Parameters:
     - duration: int, duration of the task in seconds
@@ -54,7 +54,8 @@ def long_running_task(duration):
 
 def initialize_conversation():
     """
-    Initialize the conversation history with system and assistant messages.
+    Inicia el historial de la conversación con el sistema. Incluye
+    los mensajes del usuario y el sistema.
 
     Returns:
     - list: Initialized conversation history.
@@ -62,11 +63,7 @@ def initialize_conversation():
     assistant_message = "¡Hola! Soy su asistente de consultas fiscales ¿En qué puedo ayudarle?"
 
     conversation_history = [
-        {"role": "system", "content": "You are Streamly, a specialized AI assistant trained in Streamlit."},
-        {"role": "system", "content": "Streamly, is powered by the OpenAI GPT-4o-mini model, released on July 18, 2024."},
-        {"role": "system", "content": "You are trained up to Streamlit Version 1.36.0, release on June 20, 2024."},
-        {"role": "system", "content": "Refer to conversation history to provide context to your response."},
-        {"role": "system", "content": "You were created by Madie Laine, an OpenAI Researcher."},
+        {"role": "system", "content": "Inicio conversacion"},
         {"role": "assistant", "content": assistant_message}
     ]
     return conversation_history
@@ -76,14 +73,14 @@ def initialize_conversation():
 #-------------ESTA FUNCION ES LA IMPORTANTE)
 def on_chat_submit(chat_input):
     """
-    Handle chat input submissions and interact with the OpenAI API.
+    Gestiona la interacción del usuario cuando introduce el mensaje
 
-    Parameters:
+    Parametros:
     - chat_input (str): The chat input from the user.
     - latest_updates (dict): The latest Streamlit updates fetched from a JSON file or API.
 
-    Returns:
-    - None: Updates the chat history in Streamlit's session state.
+    Salida:
+    - Ninguna: Se actualiza el historial del chat
     """
     user_input = chat_input.strip().lower()
 
@@ -91,10 +88,8 @@ def on_chat_submit(chat_input):
     st.session_state.conversation_history = initialize_conversation()
 
     st.session_state.conversation_history.append({"role": "user", "content": user_input})
-    model_engine = "gpt2"
-    assistant_reply = ""
-    generator = pipeline("text-generation", model=model_engine)
-    assistant_reply = generator(user_input, max_length=100, num_return_sequences=1)[0]["generated_text"]
+
+    assistant_reply = generar_respuesta(user_input)
 
 
     st.session_state.conversation_history.append({"role": "assistant", "content": assistant_reply})
@@ -111,7 +106,7 @@ def initialize_session_state():
 
 def main():
     """
-    Display Streamlit updates and handle the chat interface.
+    Función principal que mantiene el chat en funcionamiento
     """
     initialize_session_state()
 
@@ -145,11 +140,11 @@ def main():
         unsafe_allow_html=True,
     )
 
-    chat_input = st.chat_input("Pregunteme")
+    chat_input = st.chat_input("Pregúnteme")
     if chat_input:
         on_chat_submit(chat_input)
 
-    # Display chat history
+    # Mostrar historial de chat
     for message in st.session_state.history[-NUMBER_OF_MESSAGES_TO_DISPLAY:]:
         role = message["role"]
         avatar_image = "imgs/avatar_streamly.png" if role == "assistant" else "imgs/stuser.png" if role == "user" else None
