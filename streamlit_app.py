@@ -6,7 +6,7 @@ import torch
 import json
 import requests
 import base64
-from inferencia import text_gen
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -77,9 +77,10 @@ def initialize_conversation():
 def on_chat_submit(chat_input):
     """
     Handle chat input submissions and interact with the OpenAI API.
-    Manejar texto de entrada de usuarios para generar texto
+
     Parameters:
-    - chat_input: Texto de entrada
+    - chat_input (str): The chat input from the user.
+    - latest_updates (dict): The latest Streamlit updates fetched from a JSON file or API.
 
     Returns:
     - None: Updates the chat history in Streamlit's session state.
@@ -90,8 +91,10 @@ def on_chat_submit(chat_input):
     st.session_state.conversation_history = initialize_conversation()
 
     st.session_state.conversation_history.append({"role": "user", "content": user_input})
+    model_engine = "gpt2"
     assistant_reply = ""
-    assistant_reply = text_gen(user_input)
+    generator = pipeline("text-generation", model=model_engine, device="cuda")
+    assistant_reply = generator(user_input, max_length=100, num_return_sequences=1)[0]["generated_text"]
 
 
     st.session_state.conversation_history.append({"role": "assistant", "content": assistant_reply})
