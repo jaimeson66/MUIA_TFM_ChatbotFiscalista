@@ -7,7 +7,7 @@ import torch
 import numpy as np
 
 # Cargar el modelo y el tokenizer
-clas_dir = "/1-ClasificadorPreguntas"
+clas_dir = "./1-ClasificadorPreguntas"
 model = BertForSequenceClassification.from_pretrained(clas_dir)
 tokenizer = BertTokenizer.from_pretrained(clas_dir)
 
