@@ -53,7 +53,7 @@ def generar_respuesta(pregunta):
     #dato = df_etiquetas[df_etiquetas["Clase"] == prediccion]
     #contexto =  dato["Respuesta"].to_string(index=False)
     #contexto = "las operaciones intracomunitarias deben informarse en el modelo 349"
-    """
+
     inputs = tokenizer_SQUAD(
         pregunta,
         contexto,
@@ -72,5 +72,5 @@ def generar_respuesta(pregunta):
     respuesta = tokenizer_SQUAD.convert_tokens_to_string(
         tokenizer_SQUAD.convert_ids_to_tokens(inputs["input_ids"][0][start_idx:end_idx + 1])
     )
-    """
+
     return respuesta
