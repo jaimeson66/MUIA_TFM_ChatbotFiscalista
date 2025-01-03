@@ -41,7 +41,7 @@ def generar_respuesta(pregunta):
     model_SQUAD = AutoModelForQuestionAnswering.from_pretrained(model_name)
     tokenizer_SQUAD = AutoTokenizer.from_pretrained(model_name)
     # Importar datos desde base de conocimiento
-    df_etiquetas = pd.read_csv('/baseConocimiento.csv',encoding = 'utf-8', delimiter = ';', index_col=False)
+    df_etiquetas = pd.read_csv('./baseConocimiento.csv',encoding = 'utf-8', delimiter = ';', index_col=False)
     dato = df_etiquetas[df_etiquetas["Clase"] == clasificador_pregunta(pregunta)]
     contexto = dato["Respuesta"].to_string(index=False)
     respuesta = contexto
