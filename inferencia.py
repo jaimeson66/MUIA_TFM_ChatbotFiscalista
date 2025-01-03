@@ -43,7 +43,8 @@ def generar_respuesta(pregunta):
     # Importar datos desde base de conocimiento
     df_etiquetas = pd.read_csv('./BaseConocimiento/baseConocimiento.csv',encoding = 'utf-8', delimiter = ';', index_col=False)
     dato = df_etiquetas[df_etiquetas["Clase"] == clasificador_pregunta(pregunta)]
-    contexto = dato["Respuesta"].to_string(index=False)
+    #contexto = dato["Respuesta"].to_string(index=False)
+    contexto = dato["Respuesta"]
     respuesta = contexto
     # Formatear la pregunta y el contexto en español
     #pregunta = "cuando se presenta una declaracion rectificativa"
