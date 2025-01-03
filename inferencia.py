@@ -12,10 +12,10 @@ model = BertForSequenceClassification.from_pretrained(modelo_clasificacion_dir)
 tokenizer = BertTokenizer.from_pretrained(modelo_clasificacion_dir)
 
 
-def clasificador_pregunta(pregunta):
+def clasificador_pregunta(frase_entrada):
    # Tokenizar el texto
    inputs = tokenizer(
-      input_sentence,
+      frase_entrada,
       return_tensors="pt",  # Formato PyTorch
       padding="max_length",
       truncation=False,
