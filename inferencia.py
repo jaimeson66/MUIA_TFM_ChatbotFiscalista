@@ -2,6 +2,7 @@ import torch
 from transformers import T5Tokenizer, T5ForConditionalGeneration,MT5ForConditionalGeneration,AutoModelForSeq2SeqLM
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 from transformers import BertTokenizer, BertForSequenceClassification
+import sentencepiece 
 import pandas as pd
 import torch
 import numpy as np
