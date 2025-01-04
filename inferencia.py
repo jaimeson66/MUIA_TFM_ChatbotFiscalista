@@ -7,70 +7,55 @@ import torch
 import numpy as np
 
 # Cargar el modelo y el tokenizer
-modelo_clasificacion_dir = "./1-ClasificadorPreguntas"
-model = BertForSequenceClassification.from_pretrained(modelo_clasificacion_dir)
-tokenizer = BertTokenizer.from_pretrained(modelo_clasificacion_dir)
+ruta_modelo_clasificador = "./1-ClasificadorPreguntas"
+model_clasificador = BertForSequenceClassification.from_pretrained(ruta_modelo_clasificador)
+tokenizer_clasificador = BertTokenizer.from_pretrained(ruta_modelo_clasificador)
 
 
 def clasificador_pregunta(frase_entrada):
    # Tokenizar el texto
-   inputs = tokenizer(
-      frase_entrada,
+   inputs_class = tokenizer_clasificador(
+      input_sentence,
       return_tensors="pt",  # Formato PyTorch
       padding="max_length",
       truncation=False,
       max_length=512
-   )
+  )
 
-   # Mover los tensores al dispositivo adecuado
+   # Mover los tensores a la GPU, si estuviera disponible
    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-   model.to(device)
-   inputs = {key: val.to(device) for key, val in inputs.items()}
+   model_clasificador.to(device)
+   inputs_class = {key: val.to(device) for key, val in inputs_class.items()}
 
    # Inferencia
    with torch.no_grad():
-      outputs = model(**inputs)
-      logits = outputs.logits
-      inferencia_clase = torch.argmax(logits, dim=-1).item()
+       outputs = model_clasificador(**inputs_class)
+       logits = outputs.logits
+       inferencia_clase = torch.argmax(logits, dim=-1).item()
 
    return inferencia_clase
 
 
 def generar_respuesta(pregunta):
-    model_name = "timpal0l/mdeberta-v3-base-squad2"  # Modelo ya afinado en SQuAD en español
-    model_SQUAD = AutoModelForQuestionAnswering.from_pretrained(model_name)
-    tokenizer_SQUAD = AutoTokenizer.from_pretrained(model_name)
+    ruta_modelo_generativo = "./2-GeneradorRespuesta"
+    tokenizer_generativo = T5Tokenizer.from_pretrained(ruta_modelo_generativo)
+    model_generativo = T5ForConditionalGeneration.from_pretrained(ruta_modelo_generativo)
     # Importar datos desde base de conocimiento
     pd.set_option("display.max_colwidth", None)  #Esto es para no truncar la columna de respuesta
     df_etiquetas = pd.read_csv('./BaseConocimiento/baseConocimiento.csv',encoding = 'utf-8', delimiter = ';', index_col=False)
     dato = df_etiquetas[df_etiquetas["Clase"] == clasificador_pregunta(pregunta)]
-    contexto = dato["Respuesta"].to_string(index=False)
-    respuesta = contexto
-    # Formatear la pregunta y el contexto en español
-    #pregunta = "cuando se presenta una declaracion rectificativa"
-    #pregunta = "En que modelo se informa una operacion intracomunitaria"
-    #prediccion = predictClass(pregunta)
-    #dato = df_etiquetas[df_etiquetas["Clase"] == prediccion]
-    #contexto =  dato["Respuesta"].to_string(index=False)
-    #contexto = "las operaciones intracomunitarias deben informarse en el modelo 349"
+    contexto = dato["Contexto"].to_string(index=False)
+    
+    #
+    input_text = f"context: {contexto} question: {pregunta}"
+    inputs = tokenizer_generativo(input_text, return_tensors="pt", max_length=512, truncation=True)
 
-    inputs = tokenizer_SQUAD(
-        pregunta,
-        contexto,
-        return_tensors="pt",  # Tensores de PyTorch
-        truncation=True,      # Truncar si el texto es demasiado largo
-        max_length=512       # Longitud máxima admitida por el modelo
-    )
-    outputs = model_SQUAD(**inputs)
+    # Mover los tensores a la GPU, si estuviera disponible
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    model_generativo.to(device)  # Move the generative model to the device
 
-    # Extraer las posiciones de inicio y fin con mayor probabilidad
-    start_idx = outputs.start_logits.argmax()
-    end_idx = outputs.end_logits.argmax()
+    # Mover los tensores a la GPU, si estuviera disponible
+    inputs = {key: val.to(device) for key, val in inputs.items()}
 
-
-
-    respuesta = tokenizer_SQUAD.convert_tokens_to_string(
-        tokenizer_SQUAD.convert_ids_to_tokens(inputs["input_ids"][0][start_idx:end_idx + 1])
-    )
-
-    return respuesta
+    outputs = model_generativo.generate(**inputs, max_length=128, num_beams=3, early_stopping=True)
+    return tokenizer_generativo.decode(outputs[0], skip_special_tokens=True)
