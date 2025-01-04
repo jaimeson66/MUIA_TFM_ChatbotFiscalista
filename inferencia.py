@@ -16,7 +16,7 @@ tokenizer_clasificador = BertTokenizer.from_pretrained(ruta_modelo_clasificador)
 def clasificador_pregunta(frase_entrada):
    # Tokenizar el texto
    inputs_class = tokenizer_clasificador(
-      input_sentence,
+      frase_entrada,
       return_tensors="pt",  # Formato PyTorch
       padding="max_length",
       truncation=False,
