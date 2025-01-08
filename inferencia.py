@@ -58,9 +58,9 @@ def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
 
 
 def generar_respuesta(pregunta):
-     """
+    """
     Generación de la respuesta a una pregunta.
-
+    
     :param pregunta: Pregunta introducida por el usuario.
     :return: Respuesta (si la pregunta está correctamente clasificada)
              o mensaje de error (si la pregunta no está correctamente clasificada).
@@ -71,7 +71,7 @@ def generar_respuesta(pregunta):
     # Importar datos desde base de conocimiento
     pd.set_option("display.max_colwidth", None)  #Esto es para no truncar la columna de respuesta
     df_etiquetas = pd.read_csv('./BaseConocimiento/baseConocimiento.csv',encoding = 'utf-8', delimiter = ';', index_col=False)
- if clasificador_pregunta(pregunta) != "clase no reconocida":
+    if clasificador_pregunta(pregunta) != "clase no reconocida":
       dato = df_etiquetas[df_etiquetas["Clase"] == clasificador_pregunta(pregunta)]
       contexto = dato["Contexto"].to_string(index=False)
 
@@ -89,4 +89,4 @@ def generar_respuesta(pregunta):
       outputs = model_generativo.generate(**inputs, max_length=128, num_beams=5, early_stopping=True)
       return tokenizer_generativo.decode(outputs[0], skip_special_tokens=True)
     else:
-      return "No comprendo la pregunta. Por favor ¿Puede volver a repetirla?" 
+      return "No comprendo la pregunta. Por favor ¿Puede volver a repetirla?"
