@@ -1,5 +1,5 @@
 {
-  "_name_or_path": "t5-small",
+  "_name_or_path": "/content/drive/MyDrive/TFM_Pruebas_Investigaci\u00f3n/02-FineTunningT5-prueba2/final_model",
   "architectures": [
     "T5ForConditionalGeneration"
   ],
