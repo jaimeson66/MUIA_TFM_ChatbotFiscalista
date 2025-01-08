@@ -1,4 +1,13 @@
 ﻿Clase;Etiqueta;Contexto
 0;IMPORTACION_CONCEPTO;La importación es la entrada de mercancías procedentes de terceros países dentro de la Unión Europea.
-1;IMPORTACION_DECLARACION;Una importación se declara en la casilla 77 del modelo 303.
-2;PLAZO_PRESENTACION_303_GENERICO;El plazo de presentación del modelo 303 depende del volumen de operaciones de la empresa.
+1;IMPORTACION_DECLARACION;La cuota de importación se declara en la casilla 77 del modelo 303.
+2;PLAZO_PRESENTACION_303_GENERICO;El plazo de presentación del modelo 303 depende del volumen de operaciones de la empresa. Generalmente, un autónomo debe presentarlo trimestralmente el día 20 del primer mes del trimestre siguiente al trimestre de liquidación, mientras que una empresa que facture más de 6 millones de euros deberá presentarlo mensualmente el último día hábil del mes siguiente al periodo de liquidación.
+3;REGIMEN_ESPECIAL_SIMPLIFICADO;En el régimen simplificado de IVA  el IVA se liquida según un mecanismo de tributación por módulos, que depende del epígrafe IAE de la actividad profesional, del número de trabajadores, los metros del local, los gastos de energía y las horas de trabajo del titular de la empresa.
+4;REGIMEN_ESPECIAL_RECARGO_EQUIVALENCIA;El recargo de equivalencia es un régimen especial de IVA en el que un comerciante minorista debe soportar un importe de IVA adicional a cambio de tener la ventaja de no tener que presentar el modelo 303 trimestralmente.
+5;APLICA_RE_RECARGO_EQUIVALENCIA_SI;Sí. Este tipo de negocios pueden acogerse al régimen especial del recargo de equivalencia. Para hacer esto es necesario darse de alta en dicho régimen marcando la casilla 514 del apartado de régimenes aplicables del modelo 037 y darse de baja en el régimen general.
+6;APLICA_RE_RECARGO_EQUIVALENCIA_NO;No. Este tipo de negocios no pueden acogerse al régimen especial de recargo de equivalencia.
+7;LISTADO_MODELOS_IVA;En primer lugar se deberá presentar la declaración del alta en el Censo de Empresarios, Profesionales y Retenedores mediante el modelo 036. Posteriormente se deberá presentar la liquidación del IVA mediante el modelo 303, trimestral o mensualmente según el caso, y al finalizar el ejercicio, el modelo 390 de resumén anual.
+8;DEDUCCION_MATERIAL_PROFESIONAL_PERSONAL;Las cuotas soportadas por la adquisición de este material no pueden deducirse si se utilizan simúltaneamente en una actividad profesional y para uso personal.
+9;DEDUCCION_VEHICULOS;Es posible deducir la cuota de IVA soportado en al menos el 50 por 100, e incluso más si se puede demostrar mayor grado de afectación del vehículo.
+10;IVA_COMPRA_VIVIENDA;Solamente la compra de vivienda nueva, o de primera entrega, debe tributar el IVA. Su tipo impositivo es del 10 por ciento sobre el valor de compra, o 4 por ciente en viviendas de protección oficial.
+11;OPERACIONES_INTRACOMUNITARIAS;Esto es una operación intracomunitaria, que  deberá informarse en el modelo 349 y dicha información deberá cuadrar con las cuotas informadas en el modelo 303. También es necesario marcar la casilla 583 del modelo 036 para darse de alta como operador intracomunitario.
