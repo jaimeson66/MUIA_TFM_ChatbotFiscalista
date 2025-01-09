@@ -61,7 +61,7 @@ def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
 def generar_respuesta(pregunta):
     """
     Generación de la respuesta a una pregunta.
-
+ 
     :param pregunta: Pregunta introducida por el usuario.
     :return: Respuesta (si la pregunta está correctamente clasificada)
              o mensaje de error (si la pregunta no está correctamente clasificada).
