@@ -11,7 +11,7 @@ import numpy as np
 # Cargar el modelo y el tokenizer
 ruta_modelo_clasificador = "./1-ClasificadorPreguntas"
 model_clasificador = BertForSequenceClassification.from_pretrained(ruta_modelo_clasificador)
-tokenizer_clasificador = BertTokenizer.from_pretrained(ruta_modelo_clasificador)
+tokenizer_clasificador = AutoTokenizer.from_pretrained(ruta_modelo_clasificador)
 
 
 def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
@@ -61,7 +61,7 @@ def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
 def generar_respuesta(pregunta):
     """
     Generación de la respuesta a una pregunta.
- 
+
     :param pregunta: Pregunta introducida por el usuario.
     :return: Respuesta (si la pregunta está correctamente clasificada)
              o mensaje de error (si la pregunta no está correctamente clasificada).
