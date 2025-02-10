@@ -59,7 +59,7 @@ def on_chat_submit(chat_input):
     st.session_state.history.append({"role": "user", "content": user_input})
     st.session_state.history.append({"role": "assistant", "content": assistant_reply})
 
-
+#------------------------------------------------------------
 def initialize_session_state():
     """Iniciar variables de estado."""
     if "history" not in st.session_state:
