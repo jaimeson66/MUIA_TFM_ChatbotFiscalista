@@ -7,11 +7,21 @@ import sentencepiece
 import pandas as pd
 import torch
 import numpy as np
+import unicodedata
+import os
 
-# Cargar el modelo y el tokenizer
-ruta_modelo_clasificador = "./1-ClasificadorPreguntas"
-model_clasificador = BertForSequenceClassification.from_pretrained(ruta_modelo_clasificador)
-tokenizer_clasificador = AutoTokenizer.from_pretrained(ruta_modelo_clasificador)
+# Depurar texto de entrada (para BETO). Se reutiliza función usada
+# para procesar los datos de entrada en el entrenamiento.
+
+def limpiar_texto(texto):
+    if isinstance(texto, str):
+        # Eliminar tildes
+        texto = ''.join((c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn'))
+        # Eliminar signos de interrogación sustituyéndolos por espacios en blanco
+        texto = texto.replace('¿', '').replace('?', '').replace(',','').replace('-','').replace('_','')
+        # Convertir a minúsculas
+        texto = texto.lower()
+    return texto
 
 
 def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
@@ -23,9 +33,13 @@ def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
     :param umbral_confianza: Valor mínimo de confianza para aceptar la clasificación
     :return: Clase predicha o "clase no reconocida"
     """
+    # Cargar el modelo y el tokenizer
+    ruta_modelo_clasificador = "./1-ClasificadorPreguntas"
+    model_clasificador = BertForSequenceClassification.from_pretrained(ruta_modelo_clasificador)
+    tokenizer_clasificador = AutoTokenizer.from_pretrained(ruta_modelo_clasificador)
     # Tokenizar el texto
     inputs_class = tokenizer_clasificador(
-        input_sentence,
+        limpiar_texto(input_sentence), # Cadena de texto limpia
         return_tensors="pt",  # Formato PyTorch
         padding="max_length",
         truncation=False,
