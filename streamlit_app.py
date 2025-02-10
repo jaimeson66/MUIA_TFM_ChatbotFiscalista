@@ -61,7 +61,7 @@ def on_chat_submit(chat_input):
     - Ninguna. Se actualiza el historial del chat, que será el que se
     muestre por pantalla.
     """
-    user_input = chat_input.strip().lower()
+    user_input = chat_input.strip()
 
     #Si no hay conversación en la sesión se muestra el mensaje de bienvenida
     st.session_state.conversation_history = initialize_conversation()
