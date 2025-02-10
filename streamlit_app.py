@@ -87,7 +87,7 @@ def main():
     # Panel de prompt
     chat_input = st.chat_input("Pregúnteme")
     if chat_input:
-        # Función 3)
+        # Función 3) que se invoca al enviar el mensaje al chatbot
         on_chat_submit(chat_input)
 
     # Mostrar historial de chat de la sesión activa
