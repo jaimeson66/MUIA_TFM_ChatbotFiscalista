@@ -12,7 +12,7 @@ import os
 
 # Por alguna razón que no se indica en el foro de soporte de streamlit
 # es necesario hacer esto para evitar errores de instanciamiento de pytorch
-
+# https://discuss.streamlit.io/t/message-error-about-torch/90886/5
 torch.classes.__path__ = [] # add this line to manually set it to empty.
 
 # Depurar texto de entrada (para BETO). Se reutiliza función usada
