@@ -84,7 +84,7 @@ def generar_respuesta(pregunta):
     """
     # 1) Importar el modelo generativo fine tuneado y tokenizar según MT5.
     ruta_modelo_generativo = "./2-GeneradorRespuesta"
-    tokenizer_generativo = AutoTokenizer.from_pretrained.from_pretrained(ruta_modelo_generativo)
+    tokenizer_generativo = AutoTokenizer.from_pretrained(ruta_modelo_generativo)
     model_generativo = MT5ForConditionalGeneration.from_pretrained(ruta_modelo_generativo)
 
     # 2)Importar datos desde base de conocimiento
