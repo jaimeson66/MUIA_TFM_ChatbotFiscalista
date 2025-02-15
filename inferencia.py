@@ -1,7 +1,7 @@
 import torch
-from transformers import T5Tokenizer, T5ForConditionalGeneration,MT5ForConditionalGeneration,AutoModelForSeq2SeqLM
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
-from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import MT5ForConditionalGeneration,AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer
+from transformers import BertForSequenceClassification
 import torch.nn.functional as F  # Para usar softmax
 import sentencepiece
 import pandas as pd
@@ -33,7 +33,7 @@ def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
     :param umbral_confianza: Valor mínimo de confianza para aceptar la clasificación
     :return: Clase predicha o "clase no reconocida"
     """
-    # Cargar el modelo y el tokenizer
+    # 1) Cargar el modelo y el tokenizer
     ruta_modelo_clasificador = "./1-ClasificadorPreguntas"
     model_clasificador = BertForSequenceClassification.from_pretrained(ruta_modelo_clasificador)
     tokenizer_clasificador = AutoTokenizer.from_pretrained(ruta_modelo_clasificador)
@@ -46,9 +46,10 @@ def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
         max_length=512
     )
 
-    # Mover los tensores al dispositivo adecuado
+    # Seleccionar el dispositivo para cargar el modelo. En streamlit no está disponible GPU
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     model_clasificador.to(device)
+    # Introducir los inputs en el dispositivo
     inputs_class = {key: val.to(device) for key, val in inputs_class.items()}
 
     # Inferencia
@@ -61,6 +62,7 @@ def clasificador_pregunta(input_sentence, umbral_confianza=0.25):
         #print(f"Logits: {logits}")
         #print(f"Probabilidades: {probabilidades}")
 
+        # Softmax para probabilidad
         confianza_maxima, inferencia_clase = torch.max(probabilidades, dim=-1)  # Confianza y clase predicha
 
     # Verificar si la confianza está dentro del umbral
@@ -80,28 +82,45 @@ def generar_respuesta(pregunta):
     :return: Respuesta (si la pregunta está correctamente clasificada)
              o mensaje de error (si la pregunta no está correctamente clasificada).
     """
+    # 1) Importar el modelo generativo fine tuneado y tokenizar según MT5.
     ruta_modelo_generativo = "./2-GeneradorRespuesta"
-    tokenizer_generativo = T5Tokenizer.from_pretrained(ruta_modelo_generativo)
-    model_generativo = T5ForConditionalGeneration.from_pretrained(ruta_modelo_generativo)
-    # Importar datos desde base de conocimiento
+    tokenizer_generativo = AutoTokenizer.from_pretrained.from_pretrained(ruta_modelo_generativo)
+    model_generativo = MT5ForConditionalGeneration.from_pretrained(ruta_modelo_generativo)
+
+    # 2)Importar datos desde base de conocimiento
     pd.set_option("display.max_colwidth", None)  #Esto es para no truncar la columna de respuesta
     df_etiquetas = pd.read_csv('./BaseConocimiento/baseConocimiento.csv',encoding = 'utf-8', delimiter = ';', index_col=False)
+
+    # 3) La generación de texto solamente debe hacerse si se ha reconocido la pregunta
     if clasificador_pregunta(pregunta) != "clase no reconocida":
+      # 4) Consultar el contexto según la clase identificada
       dato = df_etiquetas[df_etiquetas["Clase"] == clasificador_pregunta(pregunta)]
       contexto = dato["Contexto"].to_string(index=False)
+      """
+      Contexto: procede de la base de conocimiento
+      pregunta: es el input del usuario
+      """
 
-      #
       input_text = f"context: {contexto} question: {pregunta}"
       inputs = tokenizer_generativo(input_text, return_tensors="pt", max_length=512, truncation=True)
 
-      # Mover inputs a la GPU, si estuviera disponible
+      # 5) Seleccionar GPU como dispositivo si estuviera disponible. En streamlit es CPU
       device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-      model_generativo.to(device)  # Move the generative model to the device
+      model_generativo.to(device)
 
-      # Mover inputs a la GPU, si estuviera disponible
-      inputs = {key: val.to(device) for key, val in inputs.items()}
+      # 6) Mover inputs al dispositivo.
+      for key in inputs:
+          inputs[key] = inputs[key].to(model_generativo.device)
 
-      outputs = model_generativo.generate(**inputs, max_length=128, num_beams=5, early_stopping=True)
+      outputs = model_generativo.generate(**inputs, max_length=256,
+                                          num_beams=2,
+                                          no_repeat_ngram_size=2,
+                                          early_stopping=False,
+                                          temperature=0.8,
+                                          top_p=0.95,
+                                          repetition_penalty=1.2,
+                                          do_sample=True
+                                          )
       return tokenizer_generativo.decode(outputs[0], skip_special_tokens=True)
     else:
       return "No comprendo la pregunta. Por favor ¿Puede volver a repetirla?"
