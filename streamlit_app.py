@@ -24,16 +24,7 @@ st.title("Asistente fiscal IVA")
 
 @st.cache_data(show_spinner=False)
 
-# 1) Iniciar variables de sesión como una lista vacía
-def initialize_session_state():
-    """Iniciar estado de sesión. Se inicia como una
-    lista vacía que se rellenará a medida que el usuario
-    interactúe con el chatbot. El estado sesión se pierde al refrescar la página"""
-    if "history" not in st.session_state:
-        st.session_state.history = []
-    if 'conversation_history' not in st.session_state:
-        st.session_state.conversation_history = []
-# 2) Función para iniciar la conversación con el mensaje inicial del chatbot
+# Función para iniciar la conversación con el mensaje inicial del chatbot
 def initialize_conversation():
     """
     Inicia el historial de la conversación con el sistema. Incluye
@@ -51,6 +42,7 @@ def initialize_conversation():
     return conversation_history
 
 @st.cache_data(show_spinner=False)
+
 # 3) Procesar el mensaje del usuario y llamar a la función de inferencia
 def on_chat_submit(chat_input):
     """
@@ -73,12 +65,24 @@ def on_chat_submit(chat_input):
 
 #------------------------------------------------------------
 
+
+# Iniciar variables de sesión como una lista vacía
+def initialize_session_state():
+    """Iniciar estado de sesión. Se inicia como una
+    lista vacía que se rellenará a medida que el usuario
+    interactúe con el chatbot. El estado sesión se pierde al refrescar la página"""
+    if 'history' not in st.session_state:
+        st.session_state.history = []
+    if 'conversation_history' not in st.session_state:
+        st.session_state.conversation_history = []
+
+
 def main():
     """
     Función principal que mantiene el chat en funcionamiento
     """
     initialize_session_state()
-    # Funciones 1) y 2)
+    #
     if not st.session_state.history:
         initial_bot_message = "¡Hola! Soy su asistente de consultas fiscales ¿En qué puedo ayudarle?"
         st.session_state.history.append({"role": "assistant", "content": initial_bot_message})
